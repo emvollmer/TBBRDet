@@ -17,13 +17,13 @@ custom_imports = dict(imports=['numpy_loader'], allow_failed_imports=False)
 dataset_type = 'CocoDataset'
 classes = ('Thermal bridge', )
 
-data_root = '/path/to/dataset/'
+data_root = '/path/to/dataset/'  # Where the dataset is saved to
 work_dir = '/path/to/work_dir'  # Where the training output results
 
-train_img_prefix = 'train/images/'
-train_ann_file = 'train/annotations/Flug1_onelabel_coco.json'
-test_img_prefix = 'test/images/'
-test_ann_file = 'test/annotations/Flug1_onelabel_coco.json'
+train_img_prefix = '/train/'
+train_ann_file = '/train/Flug1_100-104Media_coco.json'
+test_img_prefix = '/test/'
+test_ann_file = '/test/Flug1_105Media_coco.json'
 img_norm_cfg = dict(
     mean=[130.0, 135.0, 135.0, 118.0, 118.0],
     std=[44.0, 40.0, 40.0, 30.0, 21.0],

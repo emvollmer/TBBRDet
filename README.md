@@ -19,27 +19,34 @@ https://user-images.githubusercontent.com/12682506/177049125-36658a55-e07e-4355-
 
 ### Detectron2
 
-To install you'll need a Python virtual environment with Detectron2 and PyTorch.
-We used CUDA 11.1 for the paper.
+To install you'll need a Python virtual environment with Detectron2 and PyTorch. Use Python 3.6 and CUDA 11.3.
 ```bash
 # Set up virtual environment
-python3 -m venv ~/venvs/tbbrdet_det2
+python3.6 -m venv ~/venvs/tbbrdet_det2
 . ~/venvs/tbbrdet_det2/bin/activate
 
 # Install dependencies
 pip install --upgrade pip
-pip install torch==1.8.0+cu111 torchvision==0.9.0+cu111 torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
-python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu111/torch1.8/index.html
+pip install torch==1.10.1+cu113 torchvision==0.11.2+cu113 torchaudio==0.10.1+cu113 -f https://download.pytorch.org/whl/torch_stable.html
+python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
 ```
 We have provided a requirements file, we recommend using that to set up the remainder of the environment correctly.
 
 
 ### MMDetection)
 
-Create a separate venv for this.
-In it install mmdetection according to the instructions on their repository (we used version `2.21.0`), and also install 
-tensorboard and mlflow.
+Create a separate venv for this. Use Python 3.6 and cuda 11.1. In this venv, install mmdetection according to the instructions below (we used version `2.21.0`). Also, make sure to install tensorboard and mlflow.
 ```bash
+# Set up virtual environment
+python3.6 -m venv ~/venvs/tbbrdet_mmdet
+. ~/venvs/tbbrdet_mmdet/bin/activate
+pip install --upgrade pip
+
+# Install dependencies
+pip install torch==1.8.0+cu111 torchvision==0.9.0+cu111 torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
+pip install  -U openmim
+mim install mmcv-full==1.5
+pip install mmdet==2.21.0
 pip install future tensorboard mlflow
 ```
 Again, we provide a requirements file, though we recommend first setting up mmdetection and pytorch first and then installing the remaining requirements with the requirements file.

@@ -6,10 +6,10 @@ dataset_type = 'CocoDataset'
 data_root = '/path/to/dataset'
 classes = ('Thermal bridge',)
 
-train_img_prefix = 'train/images/'
-train_ann_file = 'train/annotations/Flug1_onelabel_coco.json'
-test_img_prefix = 'test/images/'
-test_ann_file = 'test/annotations/Flug1_onelabel_coco.json'
+train_img_prefix = '/train/'
+train_ann_file = '/train/Flug1_100-104Media_coco.json'
+test_img_prefix = '/test/'
+test_ann_file = '/test/Flug1_105Media_coco.json'
 
 img_norm_cfg = dict(
     mean=[130., 135., 135., 118., 118.],

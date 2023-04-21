@@ -30,16 +30,63 @@ All other scripts are adapted from the `tools/` scripts provided in the [MMDetec
 For plotting the training dataset, I've set up a copy of the config used for MaskRCNN R50 training but with augmentations removed.
 You can plot it with something like
 ```bash
-python browse_dataset.py --output-dir /path/to.output/ --channel RGB --not-show ~/Wahn/configs/mmdet/common/plotting_config.py
+python browse_dataset.py --output-dir /path/to/output/ --channel RGB --not-show ~/Wahn/configs/mmdet/common/plotting_config.py
 ```
 
 ## Training
 
-TBD
+### From scratch
+
+Training with a single GPU can be accomplished by running the `train.py` script directly with something like
+```bash
+python train.py configs/mmdet/<MODEL_NAME>/..._coco.py --work-dir /path/to/work/dir --seed <SEED_NUM> --deterministic    
+```
+
+### Using pretrained weights
+
+Similarly to before, training with a single GPU can be accomplished by running the `train.py` script directly, although a different config has to be used and according weights need to be downloaded. 
+The weights can be found in your config of choice in the [MMDetection GitHub repo](https://github.com/open-mmlab/mmdetection/blob/v2.21.0/configs/).
+The required weights (.pth) file can be downloaded into your directory of choice from the 
+matching GitHub page. For example, for the swin t, this would be done with
+```bash
+wget https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_small_patch4_window7_224.pth
+```
+
+Make sure to adapt the `load_from` in `configs/mmdet/<MODEL>/..._coco.pretrained.py` to the 
+directory of choice to which the .pth weights file was saved.
+For the above example, this would mean changing the `load_from` definition in `configs/mmdet/swin/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco.pretrained.py`.
+
+Training with a single GPU can then be run with
+```bash
+python train.py configs/mmdet/<MODEL_NAME>/..._coco.pretrained.py --work-dir /path/to/work/dir --seed <SEED_NUM> --deterministic
+```
+
+### Batch training
+
+To run training in batch, use the `slurm_submit.sh` script. Before running, make sure to change it to your specific needs (adapt `#SBATCH` logging directories and partition and `source` directory).
+Then run the script with
+```bash
+sbatch -J <JOB_NAME> slurm_submit.sh <CONFIG_DIR> <SEED_NUM>
+
+# example from above
+sbatch -J swin-pretrained scripts/mmdet/slurm_submit.sh configs/mmdet/swin/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco.pretrained.py <SEED_NUM>
+```
 
 ## Testing
 
-TBD
+Testing scripts can be run with
+```bash
+python test.py <CONFIG_PATH> <MODEL_PATH> --work-dir /path/to/results/ --out /path/to/model_eval.pickle --eval <METRIC>
+
+# example from above
+python scripts/mmdet/test.py configs/mmdet/swin/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco.pretrained.py 
+/path/to/results/best_AR@1000_epoch_35.pth 
+--work-dir /path/to/results/eval_results/ 
+--out /path/to/results/eval_results/model_evaluation_bbox.pickle
+--eval bbox
+```
+Metrics can be f.e. `bbox` or `segm` depending on the model and aim.
+
 
 ## Analyzing results
 

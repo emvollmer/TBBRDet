@@ -1,10 +1,9 @@
 #!/bin/bash
 #
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:4
-#SBATCH --ntasks-per-gpu=1
-#SBATCH --cpus-per-gpu=32
-#SBATCH --time=05:00:00
+#SBATCH --gres=gpu:full:4
+#SBATCH --tasks-per-node=4
+#SBATCH --cpus-per-task=38
 #SBATCH --output=logs/%x.%j.out
 #SBATCH --error=logs/%x.%j.err
 #SBATCH --partition=<add your partition>
@@ -32,7 +31,7 @@ SRUN_PARAMS=(
   --mpi="pmi2"
   --label
 #  --cpu-bind="none"
-  --cpus-per-task=16
+  --cpus-per-task=38
   --unbuffered
 )
 

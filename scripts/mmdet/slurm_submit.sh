@@ -42,12 +42,12 @@ export NCCL_SOCKET_IFNAME="ib0"
 export NCCL_COLLNET_ENABLE=0
 export NCCL_DEBUG_SUBSYS="INIT,GRAPH"
 
-source /path/to/python/venv
+source /path/to/TBBRDet/venv/bin/activate
 
 
 # Comment out seed and deterministic lines for randomised trainings
 srun "${SRUN_PARAMS[@]}" \
-    python ~/Wahn/scripts/mmdet/train.py \
+    python ~/TBBRDet/scripts/mmdet/train.py \
     --launcher="slurm" \
     --seed $2 \
     --deterministic \

@@ -1,4 +1,5 @@
 import json
+from math import cos, sin, radians
 import torch
 from pathlib import Path
 import click
@@ -21,9 +22,13 @@ _logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option('-j', 'json_dir', required=True,
-              type=click.Path(exists=True), help='Dir containing JSON annotation files to merge and convert into COCO, only those with a matching image subdir will be used.')
+              type=click.Path(exists=True),
+              help='Dir containing JSON annotation files to merge and convert into COCO, '
+                   'only those with a matching image subdir will be used.')
 @click.option('-i', '--images', 'img_dir', required=True,
-              type=click.Path(exists=True), help='Directory containing image_subdirs, must be named XXX for each JSON file XXX_json.json')
+              type=click.Path(exists=True),
+              help='Directory containing image_subdirs, '
+                   'must be named XXX for each JSON file XXX_json.json')
 # @click.option('-l', '--label', 'label', required=True,
 #               type=click.Path(exists=True), help='Directory containing Depth images')
 @click.option('-o', '--output', 'output_filename', required=True,
@@ -145,16 +150,26 @@ def get_thermal_dicts(json_path: Path, img_path: Path, label=None, starting_imag
             anno = region['shape_attributes']
             # Need to handle each shape differently
             if anno['name'] == 'rect':
-                # Coords are top left corner of rectangle
-                x = anno['x']
-                y = anno['y']
-                w = anno['width']
-                h = anno['height']
-                px = [x, x + w, x + w, x]
-                py = [y, y, y - h, y - h]
-            elif anno['name'] == 'polyline':
+                # Coords are bottom left corner of rectangle, as CS origin is in top left corner for images
+                p_x = anno['x']
+                p_y = anno['y']
+                rect_w = anno['width']
+                rect_h = anno['height']
+                px = [p_x, p_x + rect_w, p_x + rect_w, p_x]
+                py = [p_y, p_y, p_y - rect_h, p_y - rect_h]
+            elif (anno['name'] == 'polygon') or (anno['name'] == 'polyline'):
                 px = anno["all_points_x"]
                 py = anno["all_points_y"]
+            elif anno['name'] == 'circle':
+                center_x = anno['cx']
+                center_y = anno['cy']
+                r = round(anno['r'])
+                # calculate circle border x and y points to create polygon
+                px = []
+                py = []
+                for phi in range(0, 380, 60):
+                    px.append(round(r * cos(radians(phi)) + center_x))
+                    py.append(round(r * sin(radians(phi)) + center_y))
             else:
                 raise KeyError(f'Annotation shape {anno["name"]} not supported')
 
@@ -166,7 +181,8 @@ def get_thermal_dicts(json_path: Path, img_path: Path, label=None, starting_imag
             poly[0] = torch.clamp(poly[0] - x, 0, w)
             poly[1] = torch.clamp(poly[1] - y, 0, h)
 
-            segmentation = poly[:2].T.reshape(-1)  # Now it's (x1, y1, x2, y2, ...)
+            segmentation = poly[:2].permute(*torch.arange(poly[:2].ndim - 1, -1, -1)).reshape(-1)
+            # Now it's (x1, y1, x2, y2, ...) --- use permute instead of deprecated x.T.reshape(-1)
 
             # Before saving the region we need to drop it if it's been cropped out
             # If it has it will have zero size in at least on dimension of the bounding box

@@ -40,16 +40,26 @@ Create a separate venv for this. Use Python 3.6 and cuda 11.1. In this venv, ins
 # Set up virtual environment
 python3.6 -m venv ~/venvs/tbbrdet_mmdet
 . ~/venvs/tbbrdet_mmdet/bin/activate
-pip install --upgrade pip
+pip install --upgrade pip setuptools wheel
 
 # Install dependencies
 pip install torch==1.8.0+cu111 torchvision==0.9.0+cu111 torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
-pip install  -U openmim
+pip install -U openmim
 mim install mmcv-full==1.5
 pip install mmdet==2.21.0
-pip install future tensorboard mlflow
+pip install future tensorboard mlflow joblib tqdm
 ```
 Again, we provide a requirements file, though we recommend first setting up mmdetection and pytorch first and then installing the remaining requirements with the requirements file.
+
+Test if the installation worked successfully by importing and checking versions:
+```
+import torch
+print(torch.__version__)
+import mmdet
+print(mmdet.__version__)
+import mmcv
+print(mmcv.__version__)
+```
 
 #### Using MMDetection pretrained models
 

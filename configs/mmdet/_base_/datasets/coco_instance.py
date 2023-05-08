@@ -3,7 +3,7 @@ custom_imports = dict(imports=['numpy_loader'], allow_failed_imports=False)
 
 # dataset settings
 dataset_type = 'CocoDataset'
-data_root = '/path/to/dataset'
+data_root = '/path/to/dataset' # Where dataset(s) is/are saved to
 classes = ('Thermal bridge',)
 
 train_img_prefix = '/train/'

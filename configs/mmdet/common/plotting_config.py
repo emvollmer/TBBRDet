@@ -17,8 +17,8 @@ custom_imports = dict(imports=['numpy_loader'], allow_failed_imports=False)
 dataset_type = 'CocoDataset'
 classes = ('Thermal bridge', )
 
-data_root = '/path/to/dataset/'  # Where the dataset is saved to
-work_dir = '/path/to/work_dir'  # Where the training output results
+data_root = '/path/to/datasets'  # Where the dataset(s) is/are saved to
+work_dir = '/path/to/work_dir'  # Where the plotting output results are to be saved to
 
 train_img_prefix = '/train/'
 train_ann_file = '/train/Flug1_100-104Media_coco.json'

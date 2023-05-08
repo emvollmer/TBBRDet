@@ -28,19 +28,28 @@ All other scripts are adapted from the `tools/` scripts provided in the [MMDetec
 ## Visualisation
 
 For plotting the training dataset, I've set up a copy of the config used for MaskRCNN R50 training but with augmentations removed.
-You can plot it with something like
+You have to adapt the plotting config to insert the correct data root and working directories, then you can plot it with something like
 ```bash
-python browse_dataset.py --output-dir /path/to/output/ --channel RGB --not-show ~/Wahn/configs/mmdet/common/plotting_config.py
+python browse_dataset.py --output-dir /path/to/output/ --channel RGB --not-show ~/TBBRDet/configs/mmdet/common/plotting_config.py
 ```
+
+Change the `--channel` flag to `Thermal` if you want to plot the annotations on the thermal images instead of the RGBs.
+Add in the flag `--num-processes x` with a value for x to define the number of processes to run in parallel.
+
+Using the `--cfg-options` flag to overwrite the `data_root` and `work_dir` parameters directly from the terminal does not work due to inheritance issues. It seems this was amended in newer versions of MMDetection (s. [this issue](https://github.com/open-mmlab/mmdetection/issues/7403)).
 
 ## Training
 
 ### From scratch
 
-Training with a single GPU can be accomplished by running the `train.py` script directly with something like
+Training with a single GPU can be accomplished by running the `train.py` script directly with something like:
 ```bash
-python train.py configs/mmdet/<MODEL_NAME>/..._coco.py --work-dir /path/to/work/dir --seed <SEED_NUM> --deterministic    
+python train.py configs/mmdet/<MODEL_NAME>/..._coco.scratch.py --work-dir /path/to/work_dir --seed <SEED_NUM> --deterministic
 ```
+
+However, the configs have to be adapted in advance again - in particular the `data_root` parameter in the `configs/mmdet/_base_/datasets/coco_instance.py`.
+
+The `work_dir` flag value should be set as the directory to which the model results will be saved.
 
 ### Using pretrained weights
 
@@ -56,9 +65,9 @@ Make sure to adapt the `load_from` in `configs/mmdet/<MODEL>/..._coco.pretrained
 directory of choice to which the .pth weights file was saved.
 For the above example, this would mean changing the `load_from` definition in `configs/mmdet/swin/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco.pretrained.py`.
 
-Training with a single GPU can then be run with
+Training with a single GPU can then be run with (after having adapted the `coco_instance.py` config parameter as for from scratch training):
 ```bash
-python train.py configs/mmdet/<MODEL_NAME>/..._coco.pretrained.py --work-dir /path/to/work/dir --seed <SEED_NUM> --deterministic
+python train.py configs/mmdet/<MODEL_NAME>/..._coco.pretrained.py --work-dir /path/to/work_dir --seed <SEED_NUM> --deterministic
 ```
 
 ### Batch training
@@ -71,6 +80,10 @@ sbatch -J <JOB_NAME> slurm_submit.sh <CONFIG_DIR> <SEED_NUM>
 # example from above
 sbatch -J swin-pretrained scripts/mmdet/slurm_submit.sh configs/mmdet/swin/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco.pretrained.py <SEED_NUM>
 ```
+
+#### Common Errors to look out for
+
+- Process killed after the `Checkpoints will be saved` information / `RuntimeError: DataLoader worker (pid 485194) is killed by signal: Killed.`: This issue is usually caused by limited machine resources. Make sure to allocate enough memory. If the issue persists, reduce the `workers-per-gpu` parameter in the `configs/models/<MODEL-NAME>/...coco.py` config.
 
 ## Testing
 

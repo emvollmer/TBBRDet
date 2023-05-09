@@ -154,6 +154,16 @@ def main():
 
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
+
+        # include check for change of data_root, as this influences other directories
+        if 'data_root' in args.cfg_options:
+            new_data_root = args.cfg_options['data_root']
+            # amend train, validation and test dataset directories
+            for p in ['train', 'val', 'test']:
+                args.cfg_options[f'data.{p}.ann_file'] = new_data_root + cfg[f'{p}_ann_file']
+                args.cfg_options[f'data.{p}.img_prefix'] = new_data_root + cfg[f'{p}_img_prefix']
+
+        # merge cfg_options into cfg
         cfg.merge_from_dict(args.cfg_options)
 
     print(cfg.keys())

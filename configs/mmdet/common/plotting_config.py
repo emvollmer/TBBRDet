@@ -24,6 +24,9 @@ train_img_prefix = '/train/'
 train_ann_file = '/train/Flug1_100-104Media_coco.json'
 test_img_prefix = '/test/'
 test_ann_file = '/test/Flug1_105Media_coco.json'
+val_img_prefix = test_img_prefix
+val_ann_file = test_ann_file 
+
 img_norm_cfg = dict(
     mean=[130.0, 135.0, 135.0, 118.0, 118.0],
     std=[44.0, 40.0, 40.0, 30.0, 21.0],
@@ -106,8 +109,8 @@ data = dict(
             ])),
     val=dict(
         type='CocoDataset',
-        ann_file=data_root + test_ann_file,
-        img_prefix=data_root + test_img_prefix,
+        ann_file=data_root + val_ann_file,
+        img_prefix=data_root + val_img_prefix,
         classes=('Thermal bridge', ),
         pipeline=[
             dict(type='LoadNumpyImageFromFile', drop_height=False),

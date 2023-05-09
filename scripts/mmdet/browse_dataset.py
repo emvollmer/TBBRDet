@@ -70,7 +70,21 @@ def retrieve_data_cfg(config_path, skip_type, cfg_options):
 
     cfg = Config.fromfile(config_path)
     if cfg_options is not None:
+
+        # include check for change of data_root, as this influences other parameters
+        if 'data_root' in cfg_options:
+            new_data_root = cfg_options['data_root']
+            # amending train dataset directories
+            cfg_options['data.train.dataset.ann_file'] = new_data_root + cfg['train_ann_file']
+            cfg_options['data.train.dataset.img_prefix'] = new_data_root + cfg['train_img_prefix']
+            # amending validation and test dataset directories
+            for p in ['val', 'test']:
+                cfg_options[f'data.{p}.ann_file'] = new_data_root + cfg[f'{p}_ann_file']
+                cfg_options[f'data.{p}.img_prefix'] = new_data_root + cfg[f'{p}_img_prefix']
+
+        # merge cfg_options into cfg
         cfg.merge_from_dict(cfg_options)
+
     train_data_cfg = cfg.data.train
     while 'dataset' in train_data_cfg and train_data_cfg[
             'type'] != 'MultiImageMixDataset':

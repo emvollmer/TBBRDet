@@ -3,13 +3,16 @@ custom_imports = dict(imports=['numpy_loader'], allow_failed_imports=False)
 
 # dataset settings
 dataset_type = 'CocoDataset'
-data_root = '/path/to/dataset' # Where dataset(s) is/are saved to
+data_root = '/path/to/datasets' # Where dataset(s) is/are saved to
 classes = ('Thermal bridge',)
 
 train_img_prefix = '/train/'
 train_ann_file = '/train/Flug1_100-104Media_coco.json'
 test_img_prefix = '/test/'
 test_ann_file = '/test/Flug1_105Media_coco.json'
+# We use the test set to evaluate iteratively
+val_img_prefix = test_img_prefix
+val_ann_file = test_ann_file
 
 img_norm_cfg = dict(
     mean=[130., 135., 135., 118., 118.],
@@ -55,7 +58,7 @@ data = dict(
     # val=None,
     val=dict(
         type=dataset_type,
-        img_prefix=data_root + test_img_prefix,
+        img_prefix=data_root + val_img_prefix,
         ann_file=data_root + test_ann_file,
         pipeline=test_pipeline,
         classes=classes,

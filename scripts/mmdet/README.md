@@ -90,25 +90,13 @@ python train.py configs/mmdet/<MODEL_NAME>/..._coco.pretrained.py --work-dir /pa
 ```
 
 ---
-**Issue with training using pretrained weights**
+**Note**
 
-Following the afore-mentioned instructions (in other words the config `..._coco.pretrained.py` results in the logger issuing a warning:
+Following the afore-mentioned instructions will show the below warning in the logs after displaying the config:
 ```bash
 mmdet - WARNING - No pre-trained weights for SwinTransformer, training start from scratch
 ```
-
-I assume this is on account of the missing definition of a model `init_cfg` type and checkpoint file within the config.
-The [equivalent MMDetection example config](https://github.com/open-mmlab/mmdetection/blob/v2.21.0/configs/swin/mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco.py) shows
- how they download and include the weights thusly.
-
-When this definition is incorporated into our training procedure, the `mmdet - WARNING` message is replaced by `mmdet - INFO - load checkpoint from ...`.
-However, an error occurs on account of what I assume to be the different data sizes (original 3 channel vs. here 5 channels - note the second list element):
-```bash
-RuntimeError: Error(s) in loading state_dict for SwinTransformer:
-size mismatch for patch_embed.projection.weight: copying a param with shape torch.Size([96, 3, 4, 4])
-from checkpoint, the shape in current model is torch.Size([96, 5, 4, 4]).
-```
-Further clarification is required as to how the model(s) was/were previously trained using pretrained weights.
+This can be ignored as it relates only to the backbone. As long as the logs later show `mmdet - INFO - load checkpoint from /path/to/pretrained/weights.pth` before running, the training should be functional with pretrained weights.
 
 ---
 

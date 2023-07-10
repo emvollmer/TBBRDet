@@ -1,10 +1,9 @@
 from setuptools import setup, find_packages
-import subprocess
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r") as fh:
+with open("mmdet-requirements.txt", "r") as fh:
     requirements = [line.strip() for line in fh]
 
 setup(
@@ -20,7 +19,7 @@ setup(
     classifiers=[
         'Intended Audience :: Information Technology',
         'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: BSD-3-Clause License',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',

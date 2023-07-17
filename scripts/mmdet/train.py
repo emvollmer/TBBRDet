@@ -68,13 +68,6 @@ def parse_args():
         action='store_true',
         help='whether to set deterministic options for CUDNN backend.')
     parser.add_argument(
-        '--options',
-        nargs='+',
-        action=DictAction,
-        help='override some settings in the used config, the key-value pair '
-        'in xxx=yyy format will be merged into config file (deprecate), '
-        'change to --cfg-options instead.')
-    parser.add_argument(
         '--cfg-options',
         nargs='+',
         action=DictAction,
@@ -93,14 +86,6 @@ def parse_args():
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
-
-    if args.options and args.cfg_options:
-        raise ValueError(
-            '--options and --cfg-options cannot be both '
-            'specified, --options is deprecated in favor of --cfg-options')
-    if args.options:
-        warnings.warn('--options is deprecated in favor of --cfg-options')
-        args.cfg_options = args.options
 
     return args
 
@@ -149,24 +134,28 @@ def restart_mlflow_server(cfg: dict):
     return port
 
 
-
 def cli_main():
     """
     Main function for CLI script call.
     Gets arguments, then calls actual main function.
     """
     args = parse_args()
-    main(args)
+    # call main function with argparse.Namespace object converted to dict
+    main(**vars(args))
 
 
-
-def main(args):
+def main(**kwargs):
     """
     Main training function.
     Requires arguments that are parsed when running from CLI,
     but can be otherwise provided by direct function call too.
+
+    Args:
+        **kwargs: keyword arguments in dictionary from of all argparse inputs
     """
-    # args = parse_args()
+    # convert kwargs dictionary back to namespace object, to work with as usual
+    args = argparse.Namespace()
+    args.__dict__.update(kwargs)
 
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:

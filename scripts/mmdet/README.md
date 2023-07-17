@@ -74,9 +74,9 @@ Similarly to before, training with a single GPU can be accomplished by running t
  The weights can be found in your config of choice in the [MMDetection GitHub repo](https://github.com/open-mmlab/mmdetection/blob/v2.21.0/configs/).
 The required weights (.pth) file can be downloaded into your directory of choice from the matching GitHub page. For example, for the swin t, this would be done with:
 ```bash
-wget https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_small_patch4_window7_224.pth
-# alternatively
 wget https://download.openmmlab.com/mmdetection/v2.0/swin/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco/mask_rcnn_swin-t-p4-w7_fpn_fp16_ms-crop-3x_coco_20210908_165006-90a4008c.pth
+# alternatively (not used here)
+wget https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_small_patch4_window7_224.pth
 ```
 
 Make sure to adapt the `load_from` in `configs/mmdet/<MODEL>/..._coco.pretrained.py` to the directory of choice to which the .pth weights file was saved.
@@ -90,7 +90,19 @@ python train.py configs/mmdet/<MODEL_NAME>/..._coco.pretrained.py --work-dir /pa
 ```
 
 ---
-**Note**
+**Observations regarding precedence: resume vs load**
+
+You can either:
+1. set a flag `--resume-from /path/to/ckp.pth` (resume from a provided previous run) or `--auto-resume` (start from latest checkpoint). Both flags change the definition of the parameter `resume_from` in the configs. Alternatively, you can set the value through the `--cfg-options`.
+2. define the `load_from` config parameter via the `--cfg-options` flag.
+
+In testing these settings, one can observe the following:
+
+- When defining both `load_from` and `resume_from` (through either flag), the `resume_from` path will take precedence.
+- To use i.e. COCO pre-trained weights, you **must** use `load_from`, so you should ensure you don't define `resume_from` at all!
+
+
+**Note: ignore warning message in logs**
 
 Following the afore-mentioned instructions will show the below warning in the logs after displaying the config:
 ```bash

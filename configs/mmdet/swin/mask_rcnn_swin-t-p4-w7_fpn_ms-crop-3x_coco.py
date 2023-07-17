@@ -119,7 +119,7 @@ test_pipeline = [
 data = dict(
     # Seems to be really memory intensive
     samples_per_gpu=1,
-    workers_per_gpu=32,
+    workers_per_gpu=2,
     train=dict(
         pipeline=train_pipeline,
     ),

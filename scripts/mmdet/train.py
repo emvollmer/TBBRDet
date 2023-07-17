@@ -149,8 +149,24 @@ def restart_mlflow_server(cfg: dict):
     return port
 
 
-def main():
+
+def cli_main():
+    """
+    Main function for CLI script call.
+    Gets arguments, then calls actual main function.
+    """
     args = parse_args()
+    main(args)
+
+
+
+def main(args):
+    """
+    Main training function.
+    Requires arguments that are parsed when running from CLI,
+    but can be otherwise provided by direct function call too.
+    """
+    # args = parse_args()
 
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
@@ -268,6 +284,8 @@ def main():
         cfg.model,
         train_cfg=cfg.get('train_cfg'),
         test_cfg=cfg.get('test_cfg'))
+    logger.info(f"Model:\n{model}")
+    
     model.init_weights()
 
     datasets = [build_dataset(cfg.data.train)]
@@ -290,6 +308,7 @@ def main():
             CLASSES=datasets[0].CLASSES)
     # add an attribute for visualization convenience
     model.CLASSES = datasets[0].CLASSES
+    # if using pretrained weights, the checkpoint file is loaded here
     train_detector(
         model,
         datasets,
@@ -301,4 +320,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    cli_main()

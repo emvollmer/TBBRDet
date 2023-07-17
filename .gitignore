@@ -5,6 +5,8 @@ tags
 tags.lock
 *.swp
 
+setting_up_tbbrdet_mmdet.sh
+
 # For mmdet
 scripts/mmdet/work_dirs/
 scripts/visualisation/output/

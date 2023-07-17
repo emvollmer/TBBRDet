@@ -59,7 +59,7 @@ data = dict(
     val=dict(
         type=dataset_type,
         img_prefix=data_root + val_img_prefix,
-        ann_file=data_root + test_ann_file,
+        ann_file=data_root + val_ann_file,
         pipeline=test_pipeline,
         classes=classes,
     ),

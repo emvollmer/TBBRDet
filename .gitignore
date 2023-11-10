@@ -4,6 +4,7 @@ logs/
 tags
 tags.lock
 *.swp
+.idea
 
 setting_up_tbbrdet_mmdet.sh
 

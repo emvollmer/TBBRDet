@@ -149,3 +149,15 @@ You should set `TOPDIR` to the top-level work directory of the training, then ru
 ```bash
 python analyze_results.py $TOPDIR/mask_*.py $TOPDIR/evaluation/eval_results.pkl $TOPDIR/evaluation/images_0.3/ --show-score-thr 0.3 --topk 50
 ```
+
+## Inferring on a numpy file
+Run the `infer.py` script:
+```bash
+python infer.py $INPUT_PATH --config $CONFIG_PATH --checkpoint $CKP_PATH --colour-channel $CHANNEL --score-thr $SCORE_THR --out-dir $OUT_DIR
+```
+The `colour-channel` flag can be set as `RGB`, `TIR` or `both`.
+
+An example of this would be:
+```bash
+python infer.py /path/to/image.npy --config /path/to/model/config.py --checkpoint /path/to/model/ckp.pth --colour-channel "RGB" --score-thr 0.3 --out-dir /path/to/dst/folder
+```

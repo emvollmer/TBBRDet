@@ -17,16 +17,16 @@ def parse_args():
         description='MMDet predict on image with previously trained model')
     parser.add_argument('input',
                         help='image .npy path on which to predict')
-    parser.add_argument('--config', 'config_file', help='model config (.py)')
-    parser.add_argument('--checkpoint', 'checkpoint_file',
+    parser.add_argument('-config', '--config-file', required=True, help='model config (.py)')
+    parser.add_argument('-checkpoint', '--checkpoint-file', required=True,
                         help='model checkpoint (.pth) with which to predict')
-    parser.add_argument('--colour-channel', 'colour_channel', default='both',
+    parser.add_argument('-channel', '--colour-channel', default='both',
                         choices=['TIR', 'RGB', 'both'],
                         help='Image channels on which the predictions will be visualized. '
                              'Choice of RGB, TIR or both side by side.')
     parser.add_argument('--score-thr', type=float, default=0,
                         help='score threshold (default: 0.)')
-    parser.add_argument('--out-dir', 'out_dir',
+    parser.add_argument('-out', '--out-dir', 
                         help='directory where predicted on image will be saved to')
     args = parser.parse_args()
     return args
@@ -55,8 +55,15 @@ def main():
 
     # load the image depending on the user colour channel choice
     numpy_img = np.load(npy_path)
+
+    if args.out_dir is None:
+        out_dir = Path(Path(args.config_file).parent, "predictions")
+        out_dir.mkdir(exist_ok=True, parents=True)
+        args.out_dir = str(out_dir)
+
     out_path = Path(args.out_dir, npy_path.parent.name,
-                    npy_path.stem + "_score" + args.score_thr + ".png")
+                    npy_path.stem + f"_score{args.score_thr}.png")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
     if args.colour_channel == "both":
         rgb = numpy_img[:, :, :3]
